@@ -22,6 +22,9 @@ namespace TileImageRestoratorCLI
             public int Row { get; set; }
             public int Col { get; set; }
 
+            public int TileWidth { get; set; }
+            public int TileHeight { get; set; }
+
             public TableData()
             {
                 Table = new List<Tuple<int, float>>();
@@ -65,6 +68,10 @@ namespace TileImageRestoratorCLI
                     tableData.Row = reader.ReadInt16();
                     tableData.Col = reader.ReadInt16();
 
+                    // タイル画像の縦横サイズの取得
+                    tableData.TileWidth = reader.ReadInt16();
+                    tableData.TileHeight = reader.ReadInt16();
+
                     // テーブルの読み込み
                     for (int index = 0, max = tableData.Row * tableData.Col; index < max; ++index)
                     {
@@ -86,7 +93,7 @@ namespace TileImageRestoratorCLI
         /// <param name="filePath"></param>
         /// <param name="tableData"></param>
         /// <returns></returns>
-        public static bool SaveTable (string filePath, TableData tableData)
+        public static bool SaveTable(string filePath, TableData tableData)
         {
             using (var writer = new BinaryWriter(new FileStream(filePath, FileMode.OpenOrCreate)))
             {
@@ -102,6 +109,9 @@ namespace TileImageRestoratorCLI
                     // 縦横サイズの出力
                     writer.Write((Int16)tableData.Row);
                     writer.Write((Int16)tableData.Col);
+                    // タイル画像の縦横サイズの出力
+                    writer.Write((Int16)tableData.TileWidth);
+                    writer.Write((Int16)tableData.TileHeight);
                     // テーブルの出力
                     foreach (var pair in tableData.Table)
                     {
@@ -125,9 +135,9 @@ namespace TileImageRestoratorCLI
         /// <param name="rowCount"></param>
         /// <param name="colCount"></param>
         /// <returns></returns>
-        public static TableData CreateRestoreTable(Bitmap srcBitmap, Bitmap exampleBitmap, int rowCount, int colCount)
+        public static TableData CreateRestoreTable(Bitmap srcBitmap, Bitmap exampleBitmap, int tileWidth, int tileHeight, int rowCount, int colCount)
         {
-            return UpdateRestoreTable(null, srcBitmap, exampleBitmap, rowCount, colCount);
+            return UpdateRestoreTable(null, srcBitmap, exampleBitmap, tileWidth, tileHeight, rowCount, colCount);
         }
 
         /// <summary>
@@ -139,13 +149,15 @@ namespace TileImageRestoratorCLI
         /// <param name="rowCount"></param>
         /// <param name="colCount"></param>
         /// <returns></returns>
-        public static TableData UpdateRestoreTable(TableData tableData, Bitmap srcBitmap, Bitmap exampleBitmap, int rowCount, int colCount)
+        public static TableData UpdateRestoreTable(TableData tableData, Bitmap srcBitmap, Bitmap exampleBitmap, int tileWidth, int tileHeight, int rowCount, int colCount)
         {
             if (tableData == null)
             {
                 tableData = new TableData();
                 tableData.Row = rowCount;
                 tableData.Col = colCount;
+                tableData.TileWidth = tileWidth;
+                tableData.TileHeight = tileHeight;
             }
             else
             {
@@ -155,11 +167,8 @@ namespace TileImageRestoratorCLI
                 }
             }
 
-            int srcTileWidth = srcBitmap.Width / colCount;
-            int srcTileHeight = srcBitmap.Height / rowCount;
-
-            var srcTiles = createTileImage(srcBitmap, rowCount, colCount);
-            var exampleTiles = createTileImage(exampleBitmap, rowCount, colCount);
+            var srcTiles = createTileImage(srcBitmap, tileWidth, tileHeight);
+            var exampleTiles = createTileImage(exampleBitmap, tileWidth, tileHeight);
 
             var context = new PuzzleContext();
 
@@ -207,27 +216,22 @@ namespace TileImageRestoratorCLI
         {
             var restoredBitmap = new Bitmap(srcBitmap.Width, srcBitmap.Height);
             var graphics = Graphics.FromImage(restoredBitmap);
-            // エラーがわかりやすいように目立つ色でクリア
-            graphics.Clear(Color.Red);
 
             if (tableData.Row <= 0 || tableData.Col <= 0)
             {
                 return false;
             }
 
-            var tileImage = createTileImage(srcBitmap, tableData.Row, tableData.Col);
-
-            int tileWidth = srcBitmap.Width / tableData.Col;
-            int tileHeight = srcBitmap.Height / tableData.Row;
+            var tileImage = createTileImage(srcBitmap, tableData.TileWidth, tableData.TileHeight);
 
             for (int row = 0; row < tableData.Row; ++row)
             {
                 for (int col = 0; col < tableData.Col; ++col)
                 {
-                    int x = col * tileWidth, y = row * tileHeight;
-                    Rectangle rect = new Rectangle(x, y, tileWidth, tileHeight);
+                    int x = col * tableData.TileWidth, y = row * tableData.TileHeight;
+                    Rectangle rect = new Rectangle(x, y, tableData.TileWidth, tableData.TileHeight);
                     int index = tableData.Table[row * tableData.Col + col].Item1;
-                    graphics.DrawImage(tileImage[index], new Point(x, y));
+                    graphics.DrawImage(tileImage[index], rect);
                 }
             }
             restoredBitmap.Save(outputFilePath);
@@ -242,15 +246,15 @@ namespace TileImageRestoratorCLI
         /// <param name="rowCount"></param>
         /// <param name="colCount"></param>
         /// <returns></returns>
-        public static Bitmap CreateRandomTileImage(Bitmap srcBitmap, int rowCount, int colCount)
+        public static Bitmap CreateRandomTileImage(Bitmap srcBitmap, int tileWidth, int tileHeight)
         {
-            var bitmap = new Bitmap(srcBitmap.Width, srcBitmap.Height);
+            var bitmap = new Bitmap(srcBitmap);
             var graphics = Graphics.FromImage(bitmap);
 
-            int tileWidth = bitmap.Width / colCount;
-            int tileHeight = bitmap.Height / rowCount;
+            var tileImage = createTileImage(srcBitmap, tileWidth, tileHeight);
 
-            var tileImage = createTileImage(srcBitmap, rowCount, colCount);
+            int colCount = bitmap.Width / tileWidth;
+            int rowCount = bitmap.Height / tileHeight;
 
             // シャッフルする
             var orderIndices = new int[rowCount * colCount];
@@ -281,10 +285,10 @@ namespace TileImageRestoratorCLI
         /// <param name="rowCount"></param>
         /// <param name="colCount"></param>
         /// <returns></returns>
-        private static List<Bitmap> createTileImage(Bitmap bitmap, int rowCount, int colCount)
+        private static List<Bitmap> createTileImage(Bitmap bitmap, int tileWidth, int tileHeight)
         {
-            int tileWidth = bitmap.Width / colCount;
-            int tileHeight = bitmap.Height / rowCount;
+            int colCount = bitmap.Width / tileWidth;
+            int rowCount = bitmap.Height / tileHeight;
 
             var tiles = new List<Bitmap>();
             for (int row = 0; row < rowCount; ++row)

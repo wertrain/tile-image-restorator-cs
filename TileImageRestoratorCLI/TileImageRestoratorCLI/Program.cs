@@ -54,6 +54,12 @@ namespace TileImageRestoratorCLI
                 var tableOptionCol = command.Option("-c|--col <col>",
                     "分割列数",
                     CommandOptionType.SingleValue);
+                var tableOptionWidth = command.Option("-w|--width <width>",
+                   "分割画像幅",
+                   CommandOptionType.SingleValue);
+                var tableOptionHeight = command.Option("-g|--height <height>",
+                    "分割画像高さ",
+                    CommandOptionType.SingleValue);
 
                 // 実行
                 command.OnExecute(() =>
@@ -88,17 +94,29 @@ namespace TileImageRestoratorCLI
                         colCount = int.Parse(value);
                     }
 
+                    int tileWidth = 0;
+                    foreach (var value in tableOptionWidth.Values)
+                    {
+                        tileWidth = int.Parse(value);
+                    }
+
+                    int tileHeight = 0;
+                    foreach (var value in tableOptionHeight.Values)
+                    {
+                        tileHeight = int.Parse(value);
+                    }
+
                     using (var image = new Bitmap(inputPath))
                     using (var example = new Bitmap(examplePath))
                     {
                         if (File.Exists(tablePath))
                         {
                             var tableData = TileImageRestorator.LoadTable(tablePath);
-                            TileImageRestorator.UpdateRestoreTable(tableData, image, example, rowCount, colCount);
+                            TileImageRestorator.UpdateRestoreTable(tableData, image, example, tileWidth, tileHeight, rowCount, colCount);
                         }
                         else
                         {
-                            var tableData = TileImageRestorator.CreateRestoreTable(image, example, rowCount, colCount);
+                            var tableData = TileImageRestorator.CreateRestoreTable(image, example, tileWidth, tileHeight, rowCount, colCount);
                             TileImageRestorator.SaveTable(tablePath, tableData);
                         }
                     }
@@ -177,11 +195,11 @@ namespace TileImageRestoratorCLI
                 var puzzleOptionOutput = command.Option("-o|--output <filepath>",
                     "分割後の出力画像パス",
                     CommandOptionType.SingleValue);
-                var puzzleOptionRow = command.Option("-r|--row <row>",
-                    "分割行数",
+                var puzzleOptionWidth = command.Option("-w|--width <width>",
+                    "分割画像幅",
                     CommandOptionType.SingleValue);
-                var puzzleOptionCol = command.Option("-c|--col <col>",
-                    "分割列数",
+                var puzzleOptionHeight = command.Option("-g|--height <height>",
+                    "分割画像高さ",
                     CommandOptionType.SingleValue);
 
                 // 実行
@@ -199,21 +217,21 @@ namespace TileImageRestoratorCLI
                         outputPath = value;
                     }
 
-                    int rowCount = 0;
-                    foreach (var value in puzzleOptionRow.Values)
+                    int tileWidth = 0;
+                    foreach (var value in puzzleOptionWidth.Values)
                     {
-                        rowCount = int.Parse(value);
+                        tileWidth = int.Parse(value);
                     }
 
-                    int colCount = 0;
-                    foreach (var value in puzzleOptionCol.Values)
+                    int tileHeight = 0;
+                    foreach (var value in puzzleOptionHeight.Values)
                     {
-                        colCount = int.Parse(value);
+                        tileHeight = int.Parse(value);
                     }
 
                     using (var bitmap = new Bitmap(inputPath))
                     {
-                        var tileImage = TileImageRestorator.CreateRandomTileImage(bitmap, rowCount, colCount);
+                        var tileImage = TileImageRestorator.CreateRandomTileImage(bitmap, tileWidth, tileHeight);
                         tileImage.Save(outputPath);
                     }
                     return 0;
