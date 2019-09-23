@@ -24,44 +24,6 @@ namespace TileImageRestoratorCLI
 
             app.OnExecute(() =>
             {
-#if false
-                //var src = Bitmap.FromFile(@"D:\Downloads\sakura1\235.jpg");
-                var example = Bitmap.FromFile(@"C:\Users\Owner\Pictures\example1.PNG");
-
-                var tileImageRestorator = new TileImageRestorator();
-                tileImageRestorator.IsAbleRestore(new Bitmap(src), new Bitmap(example), 38, 27);
-                var table = tileImageRestorator.Load("tbl");
-                //table.Row = 38;
-                //table.Col = 27;
-                tileImageRestorator.Restore(new Bitmap(src), table, "test.bmp");
-                //tileImageRestorator.Save("tbl", table);
-                //tileImageRestorator.CreateRandomTileImage(new Bitmap(example), 2, 2).Save("r.bmp");
-#else
-
-                //TileImageRestorator.CreateRestoreTable();
-                //var src = Bitmap.FromFile(@"D:\Develop\C#\tile-image-restorator-cs\TileImageRestoratorCLI\TileImageRestoratorCLI\bin\Debug\random.png");
-                //var example = Bitmap.FromFile(@"C:\Users\Owner\Pictures\origin.png");
-
-                //var tileImageRestorator = new TileImageRestorator();
-                //tileImageRestorator.IsAbleRestore(new Bitmap(src), new Bitmap(example), 8, 8);
-                //var table = tileImageRestorator.Load("tbl");
-                //table.Row = 38;
-                //table.Col = 27;
-                //tileImageRestorator.Restore(new Bitmap(src), table, "new.bmp");
-
-                //var example = Bitmap.FromFile(@"C:\Users\Owner\Pictures\origin.png");
-                //var tileImageRestorator = new TileImageRestorator();
-                //tileImageRestorator.CreateRandomTileImage(new Bitmap(example), 8,8).Save("test.png");
-
-
-                /*var src = Bitmap.FromFile(@"r.bmp");
-                var example = Bitmap.FromFile(@"C:\Users\Owner\Pictures\example1.PNG");
-
-                //var tileImageRestorator = new TileImageRestorator();
-                tileImageRestorator.IsAbleRestore(new Bitmap(src), new Bitmap(example), 2, 2);
-                var table = tileImageRestorator.Load("tbl");
-                tileImageRestorator.Restore(new Bitmap(src), table, "test.bmp");*/
-#endif
                 return 0;
             });
 
