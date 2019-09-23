@@ -39,21 +39,21 @@ namespace TileImageRestoratorCLI
                 var restoreArgs = command.Argument("table", "リストア用のテーブルを作成します.");
 
                 // オプションの設定
-                var tableOptionImage = command.Option("-i|--image <opitons>",
+                var tableOptionImage = command.Option("-i|--image <filepath>",
                     "修復対象の画像パス",
-                    CommandOptionType.MultipleValue);
-                var tableOptionExample = command.Option("-e|--example <opitons>",
+                    CommandOptionType.SingleValue);
+                var tableOptionExample = command.Option("-e|--example <filepath>",
                     "修復後のサンプル画像パス",
-                    CommandOptionType.MultipleValue);
-                var tableOptionTable = command.Option("-t|--table <opitons>",
+                    CommandOptionType.SingleValue);
+                var tableOptionTable = command.Option("-t|--table <filepath>",
                     "テーブルデータまでのパス",
-                    CommandOptionType.MultipleValue);
-                var tableOptionRow = command.Option("-r|--row <opitons>",
+                    CommandOptionType.SingleValue);
+                var tableOptionRow = command.Option("-r|--row <row>",
                     "分割行数",
-                    CommandOptionType.MultipleValue);
-                var tableOptionCol = command.Option("-c|--col <opitons>",
+                    CommandOptionType.SingleValue);
+                var tableOptionCol = command.Option("-c|--col <col>",
                     "分割列数",
-                    CommandOptionType.MultipleValue);
+                    CommandOptionType.SingleValue);
 
                 // 実行
                 command.OnExecute(() =>
@@ -118,15 +118,15 @@ namespace TileImageRestoratorCLI
                 var restoreArgs = command.Argument("restore", "画像をリストアします.");
 
                 // オプションの設定
-                var restoreOptionInput = command.Option("-i|--input <opitons>",
+                var restoreOptionInput = command.Option("-i|--input <filepath>",
                     "リストア対象の画像パス",
-                    CommandOptionType.MultipleValue);
-                var restoreOptionOutput = command.Option("-o|--output <opitons>",
+                    CommandOptionType.SingleValue);
+                var restoreOptionOutput = command.Option("-o|--output <filepath>",
                     "リストア後の出力画像パス",
-                    CommandOptionType.MultipleValue);
-                var restoreOptionTable = command.Option("-t|--table <opitons>",
+                    CommandOptionType.SingleValue);
+                var restoreOptionTable = command.Option("-t|--table <filepath>",
                     "テーブルデータまでのパス",
-                    CommandOptionType.MultipleValue);
+                    CommandOptionType.SingleValue);
 
                 // 実行
                 command.OnExecute(() =>
@@ -171,18 +171,18 @@ namespace TileImageRestoratorCLI
                 var restoreArgs = command.Argument("puzzle", "分割された画像を生成します.");
 
                 // オプションの設定
-                var puzzleOptionImage = command.Option("-i|--image <opitons>",
+                var puzzleOptionImage = command.Option("-i|--image <filepath>",
                     "対象の画像パス",
-                    CommandOptionType.MultipleValue);
-                var puzzleOptionOutput = command.Option("-o|--output <opitons>",
+                    CommandOptionType.SingleValue);
+                var puzzleOptionOutput = command.Option("-o|--output <filepath>",
                     "分割後の出力画像パス",
-                    CommandOptionType.MultipleValue);
-                var puzzleOptionRow = command.Option("-r|--row <opitons>",
+                    CommandOptionType.SingleValue);
+                var puzzleOptionRow = command.Option("-r|--row <row>",
                     "分割行数",
-                    CommandOptionType.MultipleValue);
-                var puzzleOptionCol = command.Option("-c|--col <opitons>",
+                    CommandOptionType.SingleValue);
+                var puzzleOptionCol = command.Option("-c|--col <col>",
                     "分割列数",
-                    CommandOptionType.MultipleValue);
+                    CommandOptionType.SingleValue);
 
                 // 実行
                 command.OnExecute(() =>
