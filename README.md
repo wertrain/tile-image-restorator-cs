@@ -2,8 +2,8 @@
 
 ランダムに分割された画像を修復します。  
 
-![random_8_8](https://github.com/wertrain/tile-image-restorator-cs/blob/master/Sample/random_8_8.png?raw=true)
-![restored_8_8](https://github.com/wertrain/tile-image-restorator-cs/blob/master/Sample/restored_8_8.png?raw=true)
+<img src="https://github.com/wertrain/tile-image-restorator-cs/blob/master/Sample/random_8_8.png?raw=true" width="240" />
+<img src="https://github.com/wertrain/tile-image-restorator-cs/blob/master/Sample/restored_8_8.png?raw=true" width="240" />
 
 ## 使い方
 
@@ -16,4 +16,8 @@ TileImageRestoratorCLI table -i="random.png" -e="example.png" -t="tbl.bin" -r=8 
 ### 作成したテーブルを使用して画像を修復
 ~~~
 TileImageRestoratorCLI restore -i="random.png" -o="restored.png" -t="tbl.bin
+~~~
+### （テスト用の画像を作成）
+~~~
+TileImageRestoratorCLI puzzle -i="random.png" -r=8 -c=8
 ~~~
