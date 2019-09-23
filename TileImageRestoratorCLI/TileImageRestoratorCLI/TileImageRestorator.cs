@@ -17,7 +17,7 @@ namespace TileImageRestoratorCLI
         /// </summary>
         public class TableData
         {
-            public List<Tuple<int, float>> Table { get; set; }
+            public List<Tuple<int, double>> Table { get; set; }
 
             public int Row { get; set; }
             public int Col { get; set; }
@@ -27,7 +27,7 @@ namespace TileImageRestoratorCLI
 
             public TableData()
             {
-                Table = new List<Tuple<int, float>>();
+                Table = new List<Tuple<int, double>>();
             }
         }
         
@@ -75,7 +75,7 @@ namespace TileImageRestoratorCLI
                     // テーブルの読み込み
                     for (int index = 0, max = tableData.Row * tableData.Col; index < max; ++index)
                     {
-                        var pair = new Tuple<int, float>(reader.ReadInt32(), (float)reader.ReadInt32());
+                        var pair = new Tuple<int, double>(reader.ReadInt32(), reader.ReadDouble());
                         tableData.Table.Add(pair);
                     }
                     return tableData;
@@ -116,7 +116,7 @@ namespace TileImageRestoratorCLI
                     foreach (var pair in tableData.Table)
                     {
                         writer.Write((Int32)pair.Item1);
-                        writer.Write((Int32)pair.Item2);
+                        writer.Write(pair.Item2);
                     }
                 }
                 catch(Exception)
@@ -161,7 +161,7 @@ namespace TileImageRestoratorCLI
             }
             else
             {
-                if (!(tableData.Row == rowCount && tableData.Col == colCount))
+                if (!(tableData.Row == rowCount && tableData.Col == colCount) && !(tableData.TileWidth == tileWidth && tableData.TileHeight == tileHeight))
                 {
                     return null;
                 }
@@ -183,12 +183,12 @@ namespace TileImageRestoratorCLI
 
                     if (tableData.Table.Count <= exampleIndex)
                     {
-                        tableData.Table.Add(new Tuple<int, float>(-1, 1000.0f));
+                        tableData.Table.Add(new Tuple<int, double>(-1, 1000.0));
                     }
 
                     if (tableData.Table[exampleIndex].Item2 > dist)
                     {
-                        tableData.Table[exampleIndex] = new Tuple<int, float>(srcIndex, (float)dist);
+                        tableData.Table[exampleIndex] = new Tuple<int, double>(srcIndex, dist);
                     }
                 }
             }
